@@ -79,10 +79,65 @@
                                              styleClass="ui-button-secondary" />
                         </div>
 
+                        <p:dialog widgetVar="modifyDialog" header="Alterar CPF / CNPJ"
+                                  modal="true" closable="false" resizable="false">
+
+                            <p:outputText for="tipo" value="Tipo de Documento:" styleClass="label" />
+                            <p:selectOneMenu id="tipo" value="#{consultaFuncionarioBean.alterarFuncionario(p)}">
+                                <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="CPF" itemValue="CPF"/>
+                                <f:selectItem itemLabel="CNPJ" itemValue="CNPJ"/>
+                                <p:ajax update="docPanel" process="@this"/>
+                            </p:selectOneMenu>
+
+                            <p:panelGroup id="docPanel" layout="block">
+                                <p:outputText for="cpf" value="CPF:" styleClass="label"
+                                style="#{p.tipoDocumento eq 'CPF' ? '' : 'display: none;'}"/>
+                                <p:inputMask id="cpf" value="#{p.numeroCPF}" mask="999.999.999-9" autoClear="true"
+                                             unmask="true"
+                                             disabled="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento ne 'CPF'}"
+                                             style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
+
+                                <p:outputLabel for="cnpj" value="CNPJ:" styleClass="label"
+                                               style="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
+                                <p:inputMask id="cnpj" value="#{consultaPessoaBean.pessoaSelecionada.numeroCNPJ}"
+                                             mask="99.999.999/9999-99"
+                                             autoClear="true" unmask="true"
+                                             disabled="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento ne 'CNPJ'}"
+                                             style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
+                            </p:panelGroup>
+
+                            <f:facet name="footer">
+                                <p:commandButton value="Salvar"
+                                                 onclick="PF('errorDialog').hide();"
+                                                 type="button" />
+                            </f:facet>
+                        </p:dialog>
+
                     </div>
                 </div>
-
             </p:panel>
+
+            <p:dialog widgetVar="errorDialog" header="Campos não preenchidos"
+                      modal="true" closable="false" resizable="false">
+                <h:outputText value="#{consultaFuncionarioBean.errorMessage}" escape="false" />
+                <f:facet name="footer">
+                    <p:commandButton value="Fechar"
+                                     onclick="PF('errorDialog').hide();"
+                                     type="button" />
+                </f:facet>
+            </p:dialog>
+
+            <p:dialog widgetVar="successDialog" header="Sucesso"
+                      modal="true" closable="false" resizable="false">
+                <h:outputText value="Cadastro alterado com sucesso!" />
+                <f:facet name="footer">
+                    <p:commandButton value="Ok"
+                                     onclick="PF('successDialog').hide();"
+                                     type="button" />
+                </f:facet>
+            </p:dialog>
+
         </h:form>
     </ui:define>
 

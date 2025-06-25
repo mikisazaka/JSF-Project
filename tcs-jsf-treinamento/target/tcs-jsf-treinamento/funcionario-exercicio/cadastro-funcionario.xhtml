@@ -11,7 +11,11 @@
 
     <ui:define name="content">
         <h:form>
-            <p:panel header="Funcionário" style="width:90%;">
+            <ui:include src="/model/confirmarModel.xhtml" >
+                <ui:param name="modalBean" value="#{cadastroFuncionario}"/>
+            </ui:include>
+
+            <p:panel header="Funcionário" style="width:90%; display: flex; justify-content: center;">
                 <p:messages showDetail="true" closable="true" />
 
                 <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom:1em;">

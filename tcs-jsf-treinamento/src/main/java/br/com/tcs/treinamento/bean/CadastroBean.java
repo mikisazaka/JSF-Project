@@ -106,6 +106,7 @@ public class CadastroBean implements Serializable {
             PrimeFaces.current().executeScript("PF('confirmDialog').show();");
         }
     }
+
     public String getErrorMessage() {
         return errorMessage;
     }

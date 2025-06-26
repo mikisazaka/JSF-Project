@@ -3,14 +3,16 @@ package br.com.tcs.treinamento.bean;
 import br.com.tcs.treinamento.entity.Funcionario;
 import org.primefaces.PrimeFaces;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @ManagedBean(name = "consultaFuncionarioBean")
-@ViewScoped
-public class ConsultaFuncionarioBean {
+@SessionScoped
+public class ConsultaFuncionarioBean implements Serializable {
+    private static final long serialVersionUID = 3450069247988201468L;
 
     private List<Funcionario> funcionarios = new ArrayList<Funcionario>();
 
@@ -56,6 +58,14 @@ public class ConsultaFuncionarioBean {
         } else {
             PrimeFaces.current().executeScript("PF('successDialog'.show());");
         }
+    }
+
+    public void exportarPdf() {
+
+    }
+
+    public void exportarExcel() {
+
     }
 
     public List<Funcionario> getFuncionarios() {

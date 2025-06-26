@@ -4,15 +4,15 @@ import br.com.tcs.treinamento.entity.Funcionario;
 import br.com.tcs.treinamento.model.FuncionarioVO;
 import org.primefaces.PrimeFaces;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @ManagedBean(name="cadastroFuncionario")
-@ViewScoped
+@SessionScoped
 public class CadastroFuncionarioBean implements Serializable {
     private static final long serialVersionUID = 3450069247988201468L;
 
@@ -24,15 +24,19 @@ public class CadastroFuncionarioBean implements Serializable {
     private String errorMessage;
 
     public void confirmar() {
-        Funcionario funcionario = new Funcionario();
-        funcionario.setNome(cadastrarFuncionario.getNome());
-        funcionario.setData(cadastrarFuncionario.getData());
-        funcionario.setTipoDocumento(cadastrarFuncionario.getTipoDocumento());
-        funcionario.setNumeroCPF(cadastrarFuncionario.getNumeroCPF());
-        funcionario.setNumeroCNPJ(cadastrarFuncionario.getNumeroCNPJ());
-        funcionario.setAtivo(true);
+        try {
+            Funcionario funcionario = new Funcionario();
+            funcionario.setNome(cadastrarFuncionario.getNome());
+            funcionario.setData(cadastrarFuncionario.getData());
+            funcionario.setTipoDocumento(cadastrarFuncionario.getTipoDocumento());
+            funcionario.setNumeroCPF(cadastrarFuncionario.getNumeroCPF());
+            funcionario.setNumeroCNPJ(cadastrarFuncionario.getNumeroCNPJ());
+            funcionario.setAtivo(true);
 
-        consultaFuncionarioBean.getFuncionarios().add(funcionario);
+            consultaFuncionarioBean.getFuncionarios().add(funcionario);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void validarCampos() {

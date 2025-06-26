@@ -20,6 +20,7 @@
                                      var="p"
                                      paginator="true"
                                      paginatorPosition="bottom"
+                                     exportable="true"
                                      rows="7"
                                      autoLayout="true"
                                      responsiveLayout="scroll"
@@ -79,14 +80,19 @@
 
                         <div style="text-align: right;">
                             <p:commandButton value="Exportar PDF"
-                                             action="#{consultaPessoaBean.exportarPdf}"
                                              icon="pi pi-file-pdf"
                                              styleClass="ui-button-secondary"
-                                             style="margin-right:10px;" />
+                                             style="margin-right:10px;">
+                                <h:graphicImage library="img" name="excel.png" width="24"/>
+                                <p:dataExporter type="xls" target="formConsulta" fileName="dados" />
+                            </p:commandButton>
+
                             <p:commandButton value="Exportar Excel"
-                                             action="#{consultaPessoaBean.exportarExcel}"
                                              icon="pi pi-file-excel"
-                                             styleClass="ui-button-secondary" />
+                                             styleClass="ui-button-secondary">
+                                <h:graphicImage library="img" name="pdf.png" width="24"/>
+                                <p:dataExporter type="pdf" target="formConsulta" fileName="dados" pageOnly="true" />
+                            </p:commandButton>
                         </div>
 
                         <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom:1em;">

@@ -10,7 +10,7 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form>
+        <h:form resetValues="true">
             <ui:include src="/model/confirmarModel.xhtml" >
                 <ui:param name="modalBean" value="#{cadastroFuncionario}"/>
             </ui:include>

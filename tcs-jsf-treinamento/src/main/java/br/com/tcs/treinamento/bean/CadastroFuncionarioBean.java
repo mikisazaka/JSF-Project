@@ -1,7 +1,6 @@
 package br.com.tcs.treinamento.bean;
 
 import br.com.tcs.treinamento.entity.Funcionario;
-import br.com.tcs.treinamento.entity.Pessoa;
 import br.com.tcs.treinamento.model.FuncionarioVO;
 import org.primefaces.PrimeFaces;
 
@@ -66,7 +65,7 @@ public class CadastroFuncionarioBean implements Serializable {
             PrimeFaces.current().executeScript("PF('errorDialog').show();");
         } else {
             confirmar();
-            PrimeFaces.current().executeScript("PF('confirmDialog').show();");
+            PrimeFaces.current().executeScript("PF('successDialog').show();");
         }
     }
 

@@ -15,7 +15,7 @@
                 <ui:param name="modalBean" value="#{cadastroFuncionario}"/>
             </ui:include>
 
-            <p:panel header="Funcionário" style="width:90%; display: flex; justify-content: center;">
+            <p:panel header="Funcionário" style="width:90%; margin-left: auto; margin-right: auto;">
                 <p:messages showDetail="true" closable="true" />
 
                 <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom:1em;">
@@ -39,20 +39,20 @@
 
                     <h:panelGroup id="docPanel" layout="block">
                         <p:outputLabel for="cpf" value="CPF:" styleClass="label"
-                                       style="#{cadastroBean.cadastrarPessoa.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
+                                       style="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
                         <p:inputMask id="cpf" value="#{cadastroFuncionario.cadastrarFuncionario.numeroCPF}"
                                      mask="999.999.999-99"
                                      autoClear="true" unmask="true"
                                      disabled="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento ne 'CPF'}"
-                                     style="width:100%; #{cadastroBean.cadastrarPessoa.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
+                                     style="width:100%; #{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
 
                         <p:outputLabel for="cnpj" value="CNPJ:" styleClass="label"
-                                       style="#{cadastroBean.cadastrarPessoa.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
+                                       style="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
                         <p:inputMask id="cnpj" value="#{cadastroFuncionario.cadastrarFuncionario.numeroCNPJ}"
                                      mask="99.999.999/9999-99"
                                      autoClear="true" unmask="true"
                                      disabled="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento ne 'CNPJ'}"
-                                     style="width:100%; #{cadastroBean.cadastrarPessoa.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
+                                     style="width:100%; #{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
                     </h:panelGroup>
                 </p:panelGrid>
 

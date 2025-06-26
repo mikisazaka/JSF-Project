@@ -14,10 +14,21 @@ public class ConsultaFuncionarioBean {
 
     private List<Funcionario> funcionarios = new ArrayList<Funcionario>();
 
+    private Funcionario funcionarioEscolhido;
+
     private String errorMessage;
+
+    public void selecionarFuncionario(Funcionario funcionario) {
+        this.funcionarioEscolhido = funcionario;
+    }
 
     public void alterarFuncionario(Funcionario funcionario) {
         PrimeFaces.current().executeScript("PF('modifyDialog'.show());");
+    }
+
+    public void deletarFuncionario(Funcionario funcionario) {
+        funcionarios.remove(funcionario);
+        PrimeFaces.current().executeScript("PF('deletarDialog'.show());");
     }
 
     public void validarCampos(Funcionario funcionario) {
@@ -49,6 +60,14 @@ public class ConsultaFuncionarioBean {
 
     public List<Funcionario> getFuncionarios() {
         return funcionarios;
+    }
+
+    public Funcionario getFuncionarioEscolhido() {
+        return funcionarioEscolhido;
+    }
+
+    public void setFuncionarioEscolhido(Funcionario funcionarioEscolhido) {
+        this.funcionarioEscolhido = funcionarioEscolhido;
     }
 
     public String getErrorMessage() {

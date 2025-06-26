@@ -11,7 +11,7 @@
 
     <ui:define name="content">
         <h:form id="formConsulta">
-            <p:panel header="Lista de Funcionários Cadastrados" style="width:100%; margin:0 auto; display: flex; justify-content: center;">
+            <p:panel header="Lista de Funcionários Cadastrados" style="width:100%; margin-left: auto; margin-right: auto;">
                 <p:messages showDetail="true" closable="true" />
 
                 <div style="width:100%;">
@@ -27,6 +27,16 @@
                                      rowKey="#{p.id}"
                                      styleClass="ui-datatable-striped ui-datatable-hover"
                                      style="width:100%; table-layout:auto;">
+
+                            <p:remoteCommand name="escolherFuncionario" actionListener="#{consultaFuncionarioBean.selecionarFuncionario}" update="@none">
+                                <f:setPropertyActionListener target="#{consultaFuncionarioBean.funcionarioEscolhido}" value="p"/>
+                            </p:remoteCommand>
+
+                            <p:column rendered="false">
+                                <h:outputScript>
+                                    escolherFuncionario();
+                                </h:outputScript>
+                            </p:column>
 
                             <p:column headerText="Nome" style="width:25%;">
                                 #{p.nome}
@@ -49,13 +59,13 @@
                             <p:column headerText="Ações" style="text-align:center; width:300px;">
                                 <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
                                     <p:commandButton value="Alterar"
-                                                     action="#{consultaPessoaBean.prepararEdicao(p)}"
+                                                     action="#{consultaFuncionarioBean.alterarFuncionario(p)}"
                                                      icon="pi pi-pencil"
                                                      styleClass="ui-button-secondary"
                                                      style="width:140px;"
                                                      update="@form" />
                                     <p:commandButton value="Excluir"
-                                                     action="#{consultaPessoaBean.prepararExclusao(p)}"
+                                                     action="#{consultaFuncionarioBean.deletarFuncionario(p)}"
                                                      icon="pi pi-trash"
                                                      styleClass="ui-button-secondary"
                                                      style="width:140px;"
@@ -79,37 +89,52 @@
                                              styleClass="ui-button-secondary" />
                         </div>
 
-                        <p:dialog widgetVar="modifyDialog" header="Alterar CPF / CNPJ"
+                        <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom:1em;">
+                            <p:dialog widgetVar="modifyDialog" header="Alterar CPF / CNPJ"
+                                      modal="true" closable="false" resizable="false">
+
+                                <p:outputLabel for="tipo" value="Tipo de Documento:" styleClass="label" />
+                                <p:selectOneMenu id="tipo" value="#{consultaFuncionarioBean.alterarFuncionario(p)}">
+                                    <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="CPF" itemValue="CPF"/>
+                                    <f:selectItem itemLabel="CNPJ" itemValue="CNPJ"/>
+                                    <p:ajax update="docPanel" process="@this"/>
+                                </p:selectOneMenu>
+
+                                <h:panelGroup id="docPanel" layout="block">
+                                    <p:outputLabel for="cpf" value="CPF:" styleClass="label"
+                                    style="#{p.tipoDocumento eq 'CPF' ? '' : 'display: none;'}"/>
+                                    <p:inputMask id="cpf" value="#{p.numeroCPF}" mask="999.999.999-9" autoClear="true"
+                                                 unmask="true"
+                                                 disabled="#{consultaFuncionarioBean.funcionarioEscolhido.tipoDocumento ne 'CPF'}"
+                                                 style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
+
+                                    <p:outputLabel for="cnpj" value="CNPJ:" styleClass="label"
+                                                   style="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
+                                    <p:inputMask id="cnpj" value="#{consultaFuncionarioBean.funcionarioEscolhido.numeroCNPJ}"
+                                                 mask="99.999.999/9999-99"
+                                                 autoClear="true" unmask="true"
+                                                 disabled="#{consultaFuncionarioBean.funcionarioEscolhido.tipoDocumento ne 'CNPJ'}"
+                                                 style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
+                                </h:panelGroup>
+
+                                <f:facet name="footer">
+                                    <p:commandButton value="Salvar"
+                                                     onclick="PF('errorDialog').hide();"
+                                                     type="button" />
+                                </f:facet>
+                            </p:dialog>
+                        </p:panelGrid>
+
+                        <p:dialog widgetVar="deletarDialog" header="Deletar"
                                   modal="true" closable="false" resizable="false">
-
-                            <p:outputText for="tipo" value="Tipo de Documento:" styleClass="label" />
-                            <p:selectOneMenu id="tipo" value="#{consultaFuncionarioBean.alterarFuncionario(p)}">
-                                <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
-                                <f:selectItem itemLabel="CPF" itemValue="CPF"/>
-                                <f:selectItem itemLabel="CNPJ" itemValue="CNPJ"/>
-                                <p:ajax update="docPanel" process="@this"/>
-                            </p:selectOneMenu>
-
-                            <p:panelGroup id="docPanel" layout="block">
-                                <p:outputText for="cpf" value="CPF:" styleClass="label"
-                                style="#{p.tipoDocumento eq 'CPF' ? '' : 'display: none;'}"/>
-                                <p:inputMask id="cpf" value="#{p.numeroCPF}" mask="999.999.999-9" autoClear="true"
-                                             unmask="true"
-                                             disabled="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento ne 'CPF'}"
-                                             style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
-
-                                <p:outputLabel for="cnpj" value="CNPJ:" styleClass="label"
-                                               style="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
-                                <p:inputMask id="cnpj" value="#{consultaPessoaBean.pessoaSelecionada.numeroCNPJ}"
-                                             mask="99.999.999/9999-99"
-                                             autoClear="true" unmask="true"
-                                             disabled="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento ne 'CNPJ'}"
-                                             style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
-                            </p:panelGroup>
-
+                            <h:outputText value="Deseja excluir o funcionário?" />
                             <f:facet name="footer">
-                                <p:commandButton value="Salvar"
-                                                 onclick="PF('errorDialog').hide();"
+                                <p:commandButton value="Voltar"
+                                                 onclick="PF('deletarDialog').hide();"
+                                                 type="button" />
+                                <p:commandButton value="Confirmar"
+                                                 onclick="PF('deletarDialog').hide();"
                                                  type="button" />
                             </f:facet>
                         </p:dialog>

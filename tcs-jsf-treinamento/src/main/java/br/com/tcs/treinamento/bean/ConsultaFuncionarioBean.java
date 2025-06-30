@@ -3,8 +3,8 @@ package br.com.tcs.treinamento.bean;
 import br.com.tcs.treinamento.entity.Funcionario;
 import org.primefaces.PrimeFaces;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class ConsultaFuncionarioBean implements Serializable {
 
     private List<Funcionario> funcionarios = new ArrayList<Funcionario>();
 
-    private Funcionario funcionarioEscolhido;
+    private Funcionario funcionarioEscolhido = new Funcionario();
 
     private String errorMessage;
 
@@ -25,12 +25,16 @@ public class ConsultaFuncionarioBean implements Serializable {
     }
 
     public void alterarFuncionario(Funcionario funcionario) {
-        PrimeFaces.current().executeScript("PF('modifyDialog'.show());");
+        this.funcionarioEscolhido = funcionario;
+        this.funcionarioEscolhido.setTipoDocumento("");
     }
 
-    public void deletarFuncionario(Funcionario funcionario) {
-        funcionarios.remove(funcionario);
-        PrimeFaces.current().executeScript("PF('deletarDialog'.show());");
+    public void confirmarExclusao() {
+        if (funcionarioEscolhido != null) {
+            funcionarioEscolhido.setAtivo(false);
+            funcionarios.remove(funcionarioEscolhido);
+            funcionarioEscolhido = null;
+        }
     }
 
     public void validarCampos(Funcionario funcionario) {
@@ -53,19 +57,11 @@ public class ConsultaFuncionarioBean implements Serializable {
         }
 
         if(!erros.isEmpty()) {
-            errorMessage = String.join("\n" + erros);
-            PrimeFaces.current().executeScript("PF('errorDialog'.show());");
+            errorMessage = String.join("<br/>", erros);
+            PrimeFaces.current().executeScript("PF('errorDialog').show();");
         } else {
-            PrimeFaces.current().executeScript("PF('successDialog'.show());");
+            PrimeFaces.current().executeScript("PF('successDialog').show();");
         }
-    }
-
-    public void exportarPdf() {
-
-    }
-
-    public void exportarExcel() {
-
     }
 
     public List<Funcionario> getFuncionarios() {

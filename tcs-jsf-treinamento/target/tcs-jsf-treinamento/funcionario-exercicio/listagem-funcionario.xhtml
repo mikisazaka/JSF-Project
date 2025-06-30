@@ -10,16 +10,18 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form id="formConsulta">
-            <p:panel header="Lista de Funcionários Cadastrados" style="width:100%; margin:0 auto; display: flex; justify-content: center;">
+        <h:form id="formConsulta" prependId="false">
+            <p:panel header="Lista de Funcionários Cadastrados" style="width:100%; margin-left: auto; margin-right: auto;">
                 <p:messages showDetail="true" closable="true" />
 
                 <div style="width:100%;">
                     <div style="transform: scale(0.9); transform-origin: top left; width:100%;">
                         <p:dataTable value="#{consultaFuncionarioBean.funcionarios}"
+                                     id="tbl"
                                      var="p"
                                      paginator="true"
                                      paginatorPosition="bottom"
+                                     exportable="true"
                                      rows="7"
                                      autoLayout="true"
                                      responsiveLayout="scroll"
@@ -49,17 +51,21 @@
                             <p:column headerText="Ações" style="text-align:center; width:300px;">
                                 <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
                                     <p:commandButton value="Alterar"
-                                                     action="#{consultaPessoaBean.prepararEdicao(p)}"
+                                                     action="#{consultaFuncionarioBean.alterarFuncionario(p)}"
                                                      icon="pi pi-pencil"
                                                      styleClass="ui-button-secondary"
+                                                     oncomplete="PF('modifyDialog').show();"
                                                      style="width:140px;"
-                                                     update="@form" />
+                                                     update=":formConsulta:modifyDialog"
+                                                     process="@this" />
                                     <p:commandButton value="Excluir"
-                                                     action="#{consultaPessoaBean.prepararExclusao(p)}"
+                                                     action="#{consultaFuncionarioBean.selecionarFuncionario(p)}"
                                                      icon="pi pi-trash"
                                                      styleClass="ui-button-secondary"
+                                                     oncomplete="PF('deletarDialog').show();"
                                                      style="width:140px;"
-                                                     update="@form" />
+                                                     update=":formConsulta:deletarDialog"
+                                                     process="@this" />
                                 </div>
                             </p:column>
 
@@ -69,57 +75,83 @@
 
                         <div style="text-align: right;">
                             <p:commandButton value="Exportar PDF"
-                                             action="#{consultaPessoaBean.exportarPdf}"
                                              icon="pi pi-file-pdf"
+                                             ajax="false"
                                              styleClass="ui-button-secondary"
-                                             style="margin-right:10px;" />
+                                             style="margin-right:10px;">
+                                <p:dataExporter type="pdf" target="tbl" fileName="funcionarios"/>
+                            </p:commandButton>
+
                             <p:commandButton value="Exportar Excel"
-                                             action="#{consultaPessoaBean.exportarExcel}"
                                              icon="pi pi-file-excel"
-                                             styleClass="ui-button-secondary" />
+                                             ajax="false"
+                                             styleClass="ui-button-secondary">
+                                <p:dataExporter type="xls" target="tbl" fileName="funcionarios"/>
+                            </p:commandButton>
                         </div>
-
-                        <p:dialog widgetVar="modifyDialog" header="Alterar CPF / CNPJ"
-                                  modal="true" closable="false" resizable="false">
-
-                            <p:outputText for="tipo" value="Tipo de Documento:" styleClass="label" />
-                            <p:selectOneMenu id="tipo" value="#{consultaFuncionarioBean.alterarFuncionario(p)}">
-                                <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
-                                <f:selectItem itemLabel="CPF" itemValue="CPF"/>
-                                <f:selectItem itemLabel="CNPJ" itemValue="CNPJ"/>
-                                <p:ajax update="docPanel" process="@this"/>
-                            </p:selectOneMenu>
-
-                            <p:panelGroup id="docPanel" layout="block">
-                                <p:outputText for="cpf" value="CPF:" styleClass="label"
-                                style="#{p.tipoDocumento eq 'CPF' ? '' : 'display: none;'}"/>
-                                <p:inputMask id="cpf" value="#{p.numeroCPF}" mask="999.999.999-9" autoClear="true"
-                                             unmask="true"
-                                             disabled="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento ne 'CPF'}"
-                                             style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
-
-                                <p:outputLabel for="cnpj" value="CNPJ:" styleClass="label"
-                                               style="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
-                                <p:inputMask id="cnpj" value="#{consultaPessoaBean.pessoaSelecionada.numeroCNPJ}"
-                                             mask="99.999.999/9999-99"
-                                             autoClear="true" unmask="true"
-                                             disabled="#{consultaPessoaBean.pessoaSelecionada.tipoDocumento ne 'CNPJ'}"
-                                             style="width:100%; #{consultaPessoaBean.pessoaSelecionada.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
-                            </p:panelGroup>
-
-                            <f:facet name="footer">
-                                <p:commandButton value="Salvar"
-                                                 onclick="PF('errorDialog').hide();"
-                                                 type="button" />
-                            </f:facet>
-                        </p:dialog>
-
                     </div>
+
+                    <p:dialog widgetVar="modifyDialog" id="modifyDialog" header="Alterar CPF / CNPJ"
+                              modal="true" closable="false" dynamic="true" resizable="false">
+
+                        <p:outputLabel for="tipo" value="Tipo de Documento:" styleClass="label" />
+                        <p:selectOneMenu id="tipo" partialSubmit="true"
+                                         value="#{consultaFuncionarioBean.funcionarioEscolhido.tipoDocumento}">
+                            <f:selectItem itemLabel="Selecione" itemValue="" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="CPF" itemValue="CPF"/>
+                            <f:selectItem itemLabel="CNPJ" itemValue="CNPJ"/>
+                            <p:ajax update="docPanel" process="@this"/>
+                        </p:selectOneMenu>
+
+                        <p:outputPanel id="docPanel" layout="block" deferred="false" deferredMode="load">
+                            <p:outputLabel for="cpf" value="CPF:" styleClass="label"
+                                           rendered="#{consultaFuncionarioBean.funcionarioEscolhido.tipoDocumento eq 'CPF'}"/>
+                            <p:inputMask id="cpf"
+                                         value="#{consultaFuncionarioBean.funcionarioEscolhido.numeroCPF}"
+                                         mask="999.999.999-99"
+                                         autoClear="true"
+                                         unmask="true"
+                                         style="width:100%; display: #{consultaFuncionarioBean.funcionarioEscolhido.tipoDocumento eq 'CPF' ? 'block' : 'none'}"/>
+
+                            <p:outputLabel for="cnpj" value="CNPJ:" styleClass="label"
+                                           rendered="#{consultaFuncionarioBean.funcionarioEscolhido.tipoDocumento eq 'CNPJ'}"/>
+                            <p:inputMask id="cnpj"
+                                         value="#{consultaFuncionarioBean.funcionarioEscolhido.numeroCNPJ}"
+                                         mask="99.999.999/9999-99"
+                                         autoClear="true"
+                                         unmask="true"
+                                         style="width:100%; display: #{consultaFuncionarioBean.funcionarioEscolhido.tipoDocumento eq 'CNPJ' ? 'block' : 'none'}"/>
+                        </p:outputPanel>
+
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Salvar"
+                                             action="#{consultaFuncionarioBean.validarCampos(consultaFuncionarioBean.funcionarioEscolhido)}"
+                                             update=":formConsulta"
+                                             oncomplete="if (args &amp;&amp; !args.validationFailed) PF('modifyDialog').hide();"
+                                             process="@form" />
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="deletarDialog" id="deletarDialog" header="Deletar"
+                              modal="true" closable="false" resizable="false" appendTo="@(body)">
+                        <h:outputText value="Deseja excluir o funcionário?" />
+                        <f:facet name="footer">
+                            <p:commandButton value="Voltar"
+                                             onclick="PF('deletarDialog').hide();"
+                                             type="button" />
+                            <p:commandButton value="Confirmar"
+                                             action="#{consultaFuncionarioBean.confirmarExclusao}"
+                                             update=":formConsulta"
+                                             oncomplete="PF('deletarDialog').hide();"
+                                             resetValues="true"/>
+                        </f:facet>
+                    </p:dialog>
                 </div>
             </p:panel>
 
             <p:dialog widgetVar="errorDialog" header="Campos não preenchidos"
-                      modal="true" closable="false" resizable="false">
+                      modal="true" closable="false" resizable="false" appendTo="@(body)">
                 <h:outputText value="#{consultaFuncionarioBean.errorMessage}" escape="false" />
                 <f:facet name="footer">
                     <p:commandButton value="Fechar"
@@ -129,7 +161,7 @@
             </p:dialog>
 
             <p:dialog widgetVar="successDialog" header="Sucesso"
-                      modal="true" closable="false" resizable="false">
+                      modal="true" closable="false" resizable="false" appendTo="@(body)">
                 <h:outputText value="Cadastro alterado com sucesso!" />
                 <f:facet name="footer">
                     <p:commandButton value="Ok"

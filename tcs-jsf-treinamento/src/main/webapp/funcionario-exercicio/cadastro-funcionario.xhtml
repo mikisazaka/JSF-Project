@@ -10,12 +10,12 @@
     </ui:define>
 
     <ui:define name="content">
-        <h:form resetValues="true">
+        <h:form id="formCadastro">
             <ui:include src="/model/confirmarModel.xhtml" >
                 <ui:param name="modalBean" value="#{cadastroFuncionario}"/>
             </ui:include>
 
-            <p:panel header="Funcionário" style="width:90%; margin-left: auto; margin-right: auto;">
+            <p:panel header="Funcionário" style="width:90%;">
                 <p:messages showDetail="true" closable="true" />
 
                 <p:panelGrid columns="2" columnClasses="label,value" style="width:100%; margin-bottom:1em;">
@@ -58,11 +58,18 @@
 
                 <p:separator/>
 
+                <p:commandButton value="Limpar"
+                                 action="#{cadastroFuncionario.limpar}"
+                                 update="@form"
+                                 icon="pi pi-refresh"
+                                 styleClass="ui-button-secondary" />
+
                 <p:commandButton value="Salvar"
                                  action="#{cadastroFuncionario.validarCampos}"
                                  update="@form"
                                  icon="pi pi-save"
-                                 ajax="true" />
+                                 ajax="true"
+                                 oncomplete="handleComplete(xhr, status, args)"/>
             </p:panel>
 
             <p:dialog widgetVar="errorDialog" header="Campos não preenchidos"
@@ -84,7 +91,6 @@
                                      type="button" />
                 </f:facet>
             </p:dialog>
-
         </h:form>
     </ui:define>
 

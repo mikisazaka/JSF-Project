@@ -4,9 +4,9 @@ import br.com.tcs.treinamento.entity.Funcionario;
 import br.com.tcs.treinamento.model.FuncionarioVO;
 import org.primefaces.PrimeFaces;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
-import javax.inject.Inject;
+import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ManagedProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class CadastroFuncionarioBean implements Serializable {
 
     private FuncionarioVO cadastrarFuncionario = new FuncionarioVO();
 
-    @Inject
+    @ManagedProperty(value = "#{consultaFuncionarioBean}")
     private ConsultaFuncionarioBean consultaFuncionarioBean;
 
     private String errorMessage;
@@ -37,6 +37,15 @@ public class CadastroFuncionarioBean implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void limpar() {
+        cadastrarFuncionario.setNome(null);
+        cadastrarFuncionario.setData(null);
+        cadastrarFuncionario.setTipoDocumento(null);
+        cadastrarFuncionario.setNumeroCPF(null);
+        cadastrarFuncionario.setNumeroCNPJ(null);
+        errorMessage = null;
     }
 
     public void validarCampos() {
@@ -79,6 +88,10 @@ public class CadastroFuncionarioBean implements Serializable {
 
     public void setCadastrarFuncionario(FuncionarioVO cadastrarFuncionario) {
         this.cadastrarFuncionario = cadastrarFuncionario;
+    }
+
+    public void setConsultaFuncionarioBean(ConsultaFuncionarioBean consultaFuncionarioBean) {
+        this.consultaFuncionarioBean = consultaFuncionarioBean;
     }
 
     public String getErrorMessage() {

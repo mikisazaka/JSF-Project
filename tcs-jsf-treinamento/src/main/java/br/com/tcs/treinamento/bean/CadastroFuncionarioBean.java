@@ -8,6 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ManagedProperty;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class CadastroFuncionarioBean implements Serializable {
             funcionario.setNumeroCPF(cadastrarFuncionario.getNumeroCPF());
             funcionario.setNumeroCNPJ(cadastrarFuncionario.getNumeroCNPJ());
             funcionario.setAtivo(true);
+            funcionario.setDataManutencao(null);
 
             consultaFuncionarioBean.getFuncionarios().add(funcionario);
         } catch (Exception e) {
@@ -45,6 +47,7 @@ public class CadastroFuncionarioBean implements Serializable {
         cadastrarFuncionario.setTipoDocumento(null);
         cadastrarFuncionario.setNumeroCPF(null);
         cadastrarFuncionario.setNumeroCNPJ(null);
+        cadastrarFuncionario.setDataManutencao(null);
         errorMessage = null;
     }
 
@@ -56,6 +59,9 @@ public class CadastroFuncionarioBean implements Serializable {
         }
         if (cadastrarFuncionario.getData() == null) {
             erros.add("Data de nascimento não informada.");
+        }
+        if (cadastrarFuncionario.getData().isAfter(LocalDate.now())) {
+            erros.add("Data de nascimento inválida - não pode ser no futuro.");
         }
         if (cadastrarFuncionario.getTipoDocumento() == null || cadastrarFuncionario.getTipoDocumento().trim().isEmpty()) {
             erros.add("Tipo de documento não informado.");

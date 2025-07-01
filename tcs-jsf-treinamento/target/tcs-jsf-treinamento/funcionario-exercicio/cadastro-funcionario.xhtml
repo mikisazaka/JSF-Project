@@ -10,6 +10,27 @@
     </ui:define>
 
     <ui:define name="content">
+        <script>
+            function mascaraReversa(input,tipo) {
+                setTimeout(() => {
+                    let valor = input.value.replace(/\D/g, '');
+                    let formatada = "";
+
+                    if(tipo === 'CPF') {
+                        valor = valor.slice(-11);
+                        valor = valor.padStart(11,'0');
+                        formatada = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+                    } else if(tipo === 'CNPJ') {
+                        valor = valor.slice(-14);
+                        valor = valor.padStart(14,'0');
+                        formatada = valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+                    }
+
+                    input.value = formatada;
+                }, 1);
+            }
+        </script>
+
         <h:form id="formCadastro">
             <ui:include src="/model/confirmarModel.xhtml" >
                 <ui:param name="modalBean" value="#{cadastroFuncionario}"/>
@@ -25,7 +46,7 @@
                                  style="width:100%;" />
 
                     <p:outputLabel for="data" value="Data de Nascimento:" styleClass="label" />
-                    <p:calendar id="data" value="#{cadastroFuncionario.cadastrarFuncionario.data}"
+                    <p:datePicker id="data" value="#{cadastroFuncionario.cadastrarFuncionario.data}"
                                 pattern="dd/MM/yyyy" showIcon="true" />
 
                     <p:outputLabel for="tipo" value="Tipo de Documento:" styleClass="label" />
@@ -40,16 +61,16 @@
                     <h:panelGroup id="docPanel" layout="block">
                         <p:outputLabel for="cpf" value="CPF:" styleClass="label"
                                        style="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
-                        <p:inputMask id="cpf" value="#{cadastroFuncionario.cadastrarFuncionario.numeroCPF}"
-                                     mask="999.999.999-99"
+                        <p:inputText id="cpf" value="#{cadastroFuncionario.cadastrarFuncionario.numeroCPF}"
+                                     oninput="mascaraReversa(this,'CPF')"
                                      autoClear="true" unmask="true"
                                      disabled="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento ne 'CPF'}"
                                      style="width:100%; #{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CPF' ? '' : 'display:none;'}" />
 
                         <p:outputLabel for="cnpj" value="CNPJ:" styleClass="label"
                                        style="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />
-                        <p:inputMask id="cnpj" value="#{cadastroFuncionario.cadastrarFuncionario.numeroCNPJ}"
-                                     mask="99.999.999/9999-99"
+                        <p:inputText id="cnpj" value="#{cadastroFuncionario.cadastrarFuncionario.numeroCNPJ}"
+                                     oninput="mascaraReversa(this,'CNPJ')"
                                      autoClear="true" unmask="true"
                                      disabled="#{cadastroFuncionario.cadastrarFuncionario.tipoDocumento ne 'CNPJ'}"
                                      style="width:100%; #{cadastroFuncionario.cadastrarFuncionario.tipoDocumento eq 'CNPJ' ? '' : 'display:none;'}" />

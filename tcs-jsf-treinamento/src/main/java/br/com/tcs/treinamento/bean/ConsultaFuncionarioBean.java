@@ -6,6 +6,8 @@ import org.primefaces.PrimeFaces;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class ConsultaFuncionarioBean implements Serializable {
     public void alterarFuncionario(Funcionario funcionario) {
         this.funcionarioEscolhido = funcionario;
         this.funcionarioEscolhido.setTipoDocumento("");
+        this.funcionarioEscolhido.setDataManutencao(LocalDate.now());
     }
 
     public void confirmarExclusao() {
@@ -62,6 +65,14 @@ public class ConsultaFuncionarioBean implements Serializable {
         } else {
             PrimeFaces.current().executeScript("PF('successDialog').show();");
         }
+    }
+
+    public String getDataNascimentoFormatada() {
+        return funcionarioEscolhido.getData() != null ? funcionarioEscolhido.getData().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+    }
+
+    public String getDataManutencaoFormatada() {
+        return funcionarioEscolhido.getDataManutencao() != null ? funcionarioEscolhido.getDataManutencao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
     }
 
     public List<Funcionario> getFuncionarios() {

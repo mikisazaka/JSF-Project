@@ -2,6 +2,8 @@ package br.com.tcs.treinamento.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
 
@@ -18,8 +20,7 @@ public class Funcionario implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    @Temporal(TemporalType.DATE)
-    private Date data;
+    private LocalDate data;
 
     private String tipoDocumento;
 
@@ -29,16 +30,27 @@ public class Funcionario implements Serializable {
 
     private Boolean ativo = true;
 
+    private LocalDate dataManutencao;
+
     public Funcionario() {
     }
 
-    public Funcionario(String nome, Date data, String tipoDocumento, String numeroCPF, String numeroCNPJ, Boolean ativo) {
+    public Funcionario(String nome, LocalDate data, String tipoDocumento, String numeroCPF, String numeroCNPJ, Boolean ativo, LocalDate dataManutencao) {
         this.nome = nome;
         this.data = data;
         this.tipoDocumento = tipoDocumento;
         this.numeroCPF = numeroCPF;
         this.numeroCNPJ = numeroCNPJ;
         this.ativo = ativo;
+        this.dataManutencao = dataManutencao;
+    }
+
+    public String getDataNascimentoFormatada() {
+        return data != null ? data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+    }
+
+    public String getDataManutencaoFormatada() {
+        return dataManutencao != null ? dataManutencao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
     }
 
     public String getNome() {
@@ -49,11 +61,11 @@ public class Funcionario implements Serializable {
         this.nome = nome;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
@@ -112,5 +124,13 @@ public class Funcionario implements Serializable {
 
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public LocalDate getDataManutencao() {
+        return dataManutencao;
+    }
+
+    public void setDataManutencao(LocalDate dataManutencao) {
+        this.dataManutencao = dataManutencao;
     }
 }
